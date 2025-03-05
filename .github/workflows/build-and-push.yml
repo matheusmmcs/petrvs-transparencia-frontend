@@ -1,0 +1,31 @@
+name: Build and Push Docker Image
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Tag da imagem Docker (ex: 1.0.1)"
+        required: true
+        default: "latest"
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Login no GitHub Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
+
+      - name: Construir e enviar a imagem Docker
+        run: |
+          VERSION=${{ github.event.inputs.version }}
+          IMAGE_NAME=ghcr.io/${{ github.repository }}:$VERSION
+          
+          docker build -t $IMAGE_NAME .
+          docker push $IMAGE_NAME
+
+      - name: Logout do Docker
+        run: docker logout ghcr.io
