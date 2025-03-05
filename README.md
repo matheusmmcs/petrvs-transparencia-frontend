@@ -1,4 +1,4 @@
-# Transparência - PGD (Petrvs)
+# PETRVS - Transparência Frontend (PGD)
 
 Como executar o projeto em ambiente de desenvolvimento (docker):
 
