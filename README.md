@@ -1,3 +1,32 @@
-Sakai is an application template for Vue based on the [create-vue](https://github.com/vuejs/create-vue), the recommended way to start a Vite-powered Vue projects.
+# Transparência - PGD (Petrvs)
 
-Visit the [documentation](https://sakai.primevue.org/documentation) to get started.
+Como executar o projeto em ambiente de desenvolvimento (docker):
+
+
+## 💻 1 -  Desenvolvimento
+
+Basta configurar os arquivos:
+
+ - .env:
+ 
+```ini
+VITE_API_URL=http://localhost:8880
+VITE_HEADER_TITLE=Transparência PGD - Órgão
+VITE_FOOTER_TEXT=Texto de rodapé
+```
+
+ Em seguida executar o comando:
+
+```sh
+docker-compose up --build
+```
+
+OBS: ao testar, abrir um navegador com CORS desabilitado. No MacOS pode-se utilizar o seguinte comando:
+
+```sh
+open -n -a /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --args --user-data-dir="/tmp/chrome_dev_test" --disable-web-security
+```
+
+A API ficará disponível em **[http://0.0.0.0:5173](http://0.0.0.0:5173)**! 🚀
+
+A aplicação utiliza PrimeVue + Vite, possuindo hot-reload, auxiliando no ajuste da aplicação sem necessitar de novo build.

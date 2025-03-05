@@ -1,4 +1,4 @@
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL || `http://localhost:8880`;
 if (API_URL === undefined) {
     throw new Error('Configure the API URL.');
 }
