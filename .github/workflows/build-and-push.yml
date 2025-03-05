@@ -3,7 +3,7 @@ name: Build and Push Docker Image
 on:
   workflow_dispatch:
     inputs:
-      env_file:
+      env_base64:
         description: "Conteúdo do .env (em base64)"
         required: true
 
@@ -46,9 +46,9 @@ jobs:
 
       - name: Construir e enviar a imagem Docker
         run: |
+          echo "Imagem = ghcr.io/${{ github.repository }}:${{ env.version }}"
           IMAGE_NAME=ghcr.io/${{ github.repository }}:${{ env.version }}
-          
-          docker build --env-file .env -t $IMAGE_NAME .
+          docker build -t $IMAGE_NAME .
           docker push $IMAGE_NAME
 
       - name: Logout do Docker
