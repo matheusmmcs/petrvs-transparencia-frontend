@@ -24,5 +24,9 @@ export default defineConfig({
     },
     define: {
         'import.meta.env.PROJECT_VERSION': JSON.stringify(version)
+    },
+    base: '/transparencia/',
+    build: {
+        outDir: 'dist'
     }
 });
