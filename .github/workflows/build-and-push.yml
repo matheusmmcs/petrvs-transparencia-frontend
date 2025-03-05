@@ -3,28 +3,49 @@ name: Build and Push Docker Image
 on:
   workflow_dispatch:
     inputs:
-      version:
-        description: "Tag da imagem Docker (ex: 1.0.1)"
+      env_file:
+        description: "Conteúdo do .env (cole aqui)"
         required: true
-        default: "latest"
 
 jobs:
-  build-and-push:
+  get-version:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.extract_version.outputs.version }}
 
     steps:
       - name: Checkout do código
         uses: actions/checkout@v4
 
-      - name: Login no GitHub Container Registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
+      - name: Obter versão do package.json
+        id: extract_version
+        run: |
+          VERSION=$(jq -r '.version' package.json)
+          echo "version=$VERSION" >> $GITHUB_ENV
+          echo "Versão detectada: $VERSION"
+
+  build-and-push:
+    needs: get-version
+    runs-on: ubuntu-latest
+    environment: TransparenciaPGD
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Criar arquivo .env com o conteúdo informado
+        run: |
+          echo "${{ github.event.inputs.env_file }}" > .env
+          echo "Arquivo .env criado com sucesso!"
+
+      - name: Login no GitHub Container Registry (usando Credential Store)
+        run: echo "${{ secrets.GHCR_BPD }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
 
       - name: Construir e enviar a imagem Docker
         run: |
-          VERSION=${{ github.event.inputs.version }}
-          IMAGE_NAME=ghcr.io/${{ github.repository }}:$VERSION
+          IMAGE_NAME=ghcr.io/${{ github.repository }}:${{ env.version }}
           
-          docker build -t $IMAGE_NAME .
+          docker build --env-file .env -t $IMAGE_NAME .
           docker push $IMAGE_NAME
 
       - name: Logout do Docker
