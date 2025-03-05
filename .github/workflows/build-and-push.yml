@@ -3,9 +3,10 @@ name: Build and Push Docker Image
 on:
   workflow_dispatch:
     inputs:
-      env_base64:
-        description: "Conteúdo do .env (em base64)"
+      confirm_version:
+        description: "False = verificar versão / True = construir e enviar"
         required: true
+        default: "false"
 
 jobs:
   get-version:
@@ -29,18 +30,11 @@ jobs:
     needs: get-version
     runs-on: ubuntu-latest
     environment: TransparenciaPGD
+    if: github.event.inputs.confirm_version == 'true'
 
     steps:
       - name: Checkout do código
         uses: actions/checkout@v4
-
-      - name: Criar arquivo .env a partir do base64
-        run: |
-          echo "${{ github.event.inputs.env_base64 }}" | base64 --decode > .env
-          echo "Arquivo .env criado com sucesso!"
-      
-      - name: Exibir conteúdo do .env (debug)
-        run: cat .env
 
       - name: Login no GitHub Container Registry (usando Credential Store)
         run: echo "${{ secrets.GHCR_BPD }}" | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
