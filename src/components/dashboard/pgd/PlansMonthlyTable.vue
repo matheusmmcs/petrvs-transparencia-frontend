@@ -14,6 +14,7 @@ const loading = ref(true);
 const showModal = ref(false);
 const userModal = ref(null);
 const filteredData = ref([]); // Guarda os dados filtrados
+const dt = ref(null);
 
 // Atualiza os planos filtrados no Pinia
 const atualizarDadosFiltrados = () => {
@@ -96,6 +97,10 @@ function selectRow(data) {
     showModal.value = true;
 }
 
+function exportCSV() {
+    dt.value.exportCSV();
+}
+
 watch(filteredData, atualizarDadosFiltrados, { deep: true });
 
 watch(
@@ -116,6 +121,7 @@ watch(
             <span class="text-muted-color">planos.</span>
         </div>
         <DataTable
+            ref="dt"
             :value="plans"
             dataKey="plano_trablho_id"
             :loading="loading"
@@ -134,8 +140,11 @@ watch(
             showGridlines
         >
             <template #header>
-                <div class="flex justify-between">
-                    <Button type="button" icon="pi pi-filter-slash" label="Limpar Filtros" outlined @click="clearFilter()" />
+                <div class="flex justify-between gap-2">
+                    <div class="flex gap-2">
+                        <Button label="Exportar CSV" icon="pi pi-upload" @click="exportCSV" />
+                        <Button type="button" icon="pi pi-filter-slash" label="Limpar Filtros" outlined @click="clearFilter()" />
+                    </div>
                     <IconField>
                         <InputIcon>
                             <i class="pi pi-search" />

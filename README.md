@@ -27,6 +27,12 @@ OBS: ao testar, abrir um navegador com CORS desabilitado. No MacOS pode-se utili
 open -n -a /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --args --user-data-dir="/tmp/chrome_dev_test" --disable-web-security
 ```
 
+No linux:
+
+```sh
+google-chrome --disable-web-security --user-data-dir="/tmp/"
+```
+
 A API ficará disponível em **[http://0.0.0.0:5173/transparencia](http://0.0.0.0:5173/transparencia)**! 🚀
 
 A aplicação utiliza PrimeVue + Vite, possuindo hot-reload, auxiliando no ajuste da aplicação sem necessitar de novo build.
