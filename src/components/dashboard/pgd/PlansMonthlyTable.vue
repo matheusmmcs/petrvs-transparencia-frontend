@@ -1,4 +1,5 @@
 <script setup>
+import { MODALIDADE_OPTIONS, formatModalidade } from '@/constants';
 import { useJobPlanStore } from '@/stores/useJobPlanStore';
 import { FilterMatchMode, FilterOperator } from '@primevue/core/api';
 import { storeToRefs } from 'pinia';
@@ -27,7 +28,7 @@ const onFilter = (event) => {
 };
 
 const statuses = reactive(['INCLUIDO', 'AGUARDANDO_ASSINATURA', 'ATIVO', 'CONCLUIDO']);
-const modalidades = reactive(['Presencial', 'Teletrabalho (Parcial)', 'Teletrabalho (Integral)']);
+const modalidades = MODALIDADE_OPTIONS;
 
 function getSeverity(status) {
     switch (status) {
@@ -170,12 +171,12 @@ watch(
             </Column>
             <Column field="modalidade_nome" sortable header="Modalidade" style="min-width: 12rem">
                 <template #body="{ data }">
-                    {{ data.modalidade_nome }}
+                    {{ formatModalidade(data.modalidade_nome) }}
                 </template>
                 <template #filter="{ filterModel }">
-                    <Select v-model="filterModel.value" :options="modalidades" placeholder="Selecione Uma" showClear>
+                    <Select v-model="filterModel.value" :options="modalidades" optionLabel="label" optionValue="value" placeholder="Selecione Uma" showClear>
                         <template #option="slotProps">
-                            <Tag :value="slotProps.option" :severity="getSeverity(slotProps.option)" />
+                            <Tag :value="slotProps.option.label" />
                         </template>
                     </Select>
                 </template>
@@ -259,7 +260,7 @@ watch(
                             </div>
                             <div class="flex flex-row items-center justify-start gap-2 font-medium text-md">
                                 <div class="">Modalidade:</div>
-                                <span class="text-surface-500 dark:text-surface-400"> {{ userModal.modalidade_nome }} </span>
+                                <span class="text-surface-500 dark:text-surface-400"> {{ formatModalidade(userModal.modalidade_nome) }} </span>
                             </div>
                             <div class="flex flex-row items-center justify-start gap-2 font-medium text-md">
                                 <div class="">Data de Início:</div>

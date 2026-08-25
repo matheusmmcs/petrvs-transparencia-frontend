@@ -1,4 +1,5 @@
 <script setup>
+import { MODALIDADE, MODALIDADE_COLORS, MODALIDADE_LABELS, formatModalidade } from '@/constants';
 import { useJobPlanStore } from '@/stores/useJobPlanStore';
 import { storeToRefs } from 'pinia';
 import ProgressSpinner from 'primevue/progressspinner';
@@ -65,20 +66,39 @@ const chartData = computed(() => {
         .slice(0, TOTAL_UNIDADES);
     const sortedStatus = Object.entries(status).sort((a, b) => b[1] - a[1]);
     const sortedModalidades = Object.entries(modalidades).sort((a, b) => b[1] - a[1]);
+
+    const getModalidadeCount = (name) => {
+        if (!name) return 0;
+        const target = name.toLowerCase();
+        for (const [key, val] of Object.entries(modalidades)) {
+            if (key && key.toLowerCase() === target) {
+                return val;
+            }
+        }
+        return 0;
+    };
+
     const stackedModalidades = {
-        Presencial: {
-            data: modalidades['Presencial'],
-            color: '#b5f2e0'
+        [MODALIDADE.INTEGRAL]: {
+            data: getModalidadeCount(MODALIDADE.INTEGRAL),
+            color: MODALIDADE_COLORS[MODALIDADE.INTEGRAL],
+            label: MODALIDADE_LABELS[MODALIDADE.INTEGRAL]
         },
-        'Teletrabalho (Parcial)': {
-            data: modalidades['Teletrabalho (Parcial)'],
-            color: '#1ec8a3'
+        [MODALIDADE.PARCIAL]: {
+            data: getModalidadeCount(MODALIDADE.PARCIAL),
+            color: MODALIDADE_COLORS[MODALIDADE.PARCIAL],
+            label: MODALIDADE_LABELS[MODALIDADE.PARCIAL]
         },
-        'Teletrabalho (Integral)': {
-            data: modalidades['Teletrabalho (Integral)'],
-            color: '#4f99c7'
+        [MODALIDADE.PRESENCIAL]: {
+            data: getModalidadeCount(MODALIDADE.PRESENCIAL),
+            color: MODALIDADE_COLORS[MODALIDADE.PRESENCIAL],
+            label: MODALIDADE_LABELS[MODALIDADE.PRESENCIAL]
         }
     };
+
+    const pctIntegral = totalModalidades > 0 ? ((stackedModalidades[MODALIDADE.INTEGRAL].data / totalModalidades) * 100).toFixed(1) : '0.0';
+    const pctParcial = totalModalidades > 0 ? ((stackedModalidades[MODALIDADE.PARCIAL].data / totalModalidades) * 100).toFixed(1) : '0.0';
+    const pctPresencial = totalModalidades > 0 ? ((stackedModalidades[MODALIDADE.PRESENCIAL].data / totalModalidades) * 100).toFixed(1) : '0.0';
 
     return {
         modalidades: {
@@ -86,21 +106,21 @@ const chartData = computed(() => {
             datasets: [
                 {
                     type: 'bar',
-                    label: `Teletrabalho (Integral) (${((stackedModalidades['Teletrabalho (Integral)'].data / totalModalidades) * 100).toFixed(1)}%)`,
-                    backgroundColor: stackedModalidades['Teletrabalho (Integral)'].color,
-                    data: [stackedModalidades['Teletrabalho (Integral)'].data]
+                    label: `${stackedModalidades[MODALIDADE.INTEGRAL].label} (${pctIntegral}%)`,
+                    backgroundColor: stackedModalidades[MODALIDADE.INTEGRAL].color,
+                    data: [stackedModalidades[MODALIDADE.INTEGRAL].data]
                 },
                 {
                     type: 'bar',
-                    label: `Teletrabalho (Parcial) (${((stackedModalidades['Teletrabalho (Parcial)'].data / totalModalidades) * 100).toFixed(1)}%)`,
-                    backgroundColor: stackedModalidades['Teletrabalho (Parcial)'].color,
-                    data: [stackedModalidades['Teletrabalho (Parcial)'].data]
+                    label: `${stackedModalidades[MODALIDADE.PARCIAL].label} (${pctParcial}%)`,
+                    backgroundColor: stackedModalidades[MODALIDADE.PARCIAL].color,
+                    data: [stackedModalidades[MODALIDADE.PARCIAL].data]
                 },
                 {
                     type: 'bar',
-                    label: `Presencial (${((stackedModalidades['Presencial'].data / totalModalidades) * 100).toFixed(1)}%)`,
-                    backgroundColor: stackedModalidades['Presencial'].color,
-                    data: [stackedModalidades['Presencial'].data],
+                    label: `${stackedModalidades[MODALIDADE.PRESENCIAL].label} (${pctPresencial}%)`,
+                    backgroundColor: stackedModalidades[MODALIDADE.PRESENCIAL].color,
+                    data: [stackedModalidades[MODALIDADE.PRESENCIAL].data],
                     borderSkipped: true,
                     borderRadius: {
                         topLeft: 8,
@@ -135,7 +155,7 @@ const chartData = computed(() => {
         },
         maxPlansUnidade: sortedUnidades[0],
         maxStatus: sortedStatus[0],
-        maxModalidades: sortedModalidades[0]
+        maxModalidades: sortedModalidades[0] ? [formatModalidade(sortedModalidades[0][0]), sortedModalidades[0][1]] : null
     };
 });
 
