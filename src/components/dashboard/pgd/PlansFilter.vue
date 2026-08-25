@@ -5,40 +5,17 @@ import ProgressSpinner from 'primevue/progressspinner';
 import { computed, onMounted, ref } from 'vue';
 
 const store = useJobPlanStore();
-const { filteredPlans } = storeToRefs(store);
+const { filteredPlans, isLoadingYear, isPlansLoaded } = storeToRefs(store);
 
 const selectedMonthYear = ref(new Date());
 const minDate = ref(new Date(2024, 10));
-const isLoading = ref(false);
 
-const getDatesRange = (d) => {
-    const year = d.getFullYear();
-    const month = d.getMonth();
-
-    const startDate = new Date(year, month, 1);
-    const endDate = new Date(year, month + 1, 1);
-
-    const formattedStartDate = startDate.toISOString().split('T')[0];
-    const formattedEndDate = endDate.toISOString().split('T')[0];
-
-    return {
-        formattedStartDate,
-        formattedEndDate
-    };
-};
+const isLoading = computed(() => isLoadingYear.value || !isPlansLoaded.value);
 
 const handleDateChange = (newValue) => {
     if (newValue) {
-        fetchPlans();
+        store.setSelectedDate(newValue);
     }
-};
-
-const fetchPlans = async () => {
-    isLoading.value = true;
-    store.clearPlans();
-    const { formattedStartDate, formattedEndDate } = getDatesRange(selectedMonthYear.value);
-    await store.fetchPlans(formattedStartDate, formattedEndDate);
-    isLoading.value = false;
 };
 
 const actualMonth = computed(() => {
@@ -47,7 +24,7 @@ const actualMonth = computed(() => {
 });
 
 onMounted(() => {
-    fetchPlans();
+    store.setSelectedDate(selectedMonthYear.value);
 });
 </script>
 

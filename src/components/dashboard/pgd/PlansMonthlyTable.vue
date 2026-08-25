@@ -3,7 +3,7 @@ import { MODALIDADE_OPTIONS, formatModalidade } from '@/constants';
 import { useJobPlanStore } from '@/stores/useJobPlanStore';
 import { FilterMatchMode, FilterOperator } from '@primevue/core/api';
 import { storeToRefs } from 'pinia';
-import { onBeforeMount, onMounted, reactive, ref, watch } from 'vue';
+import { computed, onBeforeMount, onMounted, reactive, ref, watch } from 'vue';
 
 // Instancia o store
 const store = useJobPlanStore();
@@ -11,7 +11,7 @@ const { plans, filteredPlans, isPlansLoaded } = storeToRefs(store);
 
 // Aguarda a requisição antes de renderizar
 const filters = ref(null);
-const loading = ref(true);
+const loading = computed(() => !isPlansLoaded.value);
 const showModal = ref(false);
 const userModal = ref(null);
 const filteredData = ref([]); // Guarda os dados filtrados
@@ -104,13 +104,6 @@ function exportCSV() {
 
 watch(filteredData, atualizarDadosFiltrados, { deep: true });
 
-watch(
-    isPlansLoaded,
-    () => {
-        loading.value = !isPlansLoaded.value;
-    },
-    { deep: true }
-);
 </script>
 
 <template>

@@ -8,17 +8,9 @@ import { computed, ref, watch } from 'vue';
 const store = useJobPlanStore();
 const { isPlansLoaded, filteredPlans } = storeToRefs(store);
 
-const isLoading = ref(false);
+const isLoading = computed(() => !isPlansLoaded.value);
 
 const TOTAL_UNIDADES = 15;
-
-watch(
-    isPlansLoaded,
-    () => {
-        isLoading.value = !isPlansLoaded.value;
-    },
-    { deep: true }
-);
 
 const statusColors = {
     INCLUIDO: '#FF6384',
