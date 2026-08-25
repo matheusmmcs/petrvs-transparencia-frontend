@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  petrvs-transparencia-frontend-dev:
+    image: node:22.14.0-alpine
+    container_name: petrvs-transparencia-frontend-dev
+    working_dir: /app
+    volumes:
+      - ./:/app
+      - /app/node_modules # Evita sobreposição do node_modules local
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    ports:
+      - "5173:5173" # Porta padrão do Vite
+    environment:
+      - NODE_ENV=development

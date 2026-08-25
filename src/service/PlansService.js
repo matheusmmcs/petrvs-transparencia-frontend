@@ -1,7 +1,8 @@
-const API_URL = import.meta.env.VITE_API_URL || `http://localhost:8880`;
-if (API_URL === undefined) {
+const rawApiUrl = import.meta.env.VITE_API_URL || `http://localhost:8880`;
+if (rawApiUrl === undefined) {
     throw new Error('Configure the API URL.');
 }
+const API_URL = rawApiUrl.replace(/\/+$/, '');
 
 export const PlansService = {
     fetchPlans(dtIni, dfFim) {
